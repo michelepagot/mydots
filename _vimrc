@@ -1,12 +1,15 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set rtp+=%VIM%/vimfiles/bundle/Vundle.vim/
-
-""" call plug#begin('%VIM%/vimfiles/plugged')
-call vundle#begin('%VIM%/vimfiles/bundle/')
-
+if has('win32')
+  " set the runtime path to include Vundle and initialize
+  set rtp+=%VIM%/vimfiles/bundle/Vundle.vim/
+  """ call plug#begin('%VIM%/vimfiles/plugged')
+  call vundle#begin('%VIM%/vimfiles/bundle/')
+else
+  set rtp+=~/.vim/bundle/Vundle.vim
+  call vundle#begin()
+endif
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
