@@ -60,17 +60,20 @@ if has('win32') && !has('gui_running') && !empty($CONEMUBUILD)
 
   inoremap <Char-0x07F> <BS>
   nnoremap <Char-0x07F> <BS>
-  "  colorscheme zenburn
-  " Unified color scheme (default: dark)
-  colo seoul256
-  " Light color scheme
-  "   colo seoul256-light
-  " Switch
-  "   set background=dark
-  "   set background=light  
+  
 endif
 
-"
+
+"  colorscheme zenburn
+" Unified color scheme (default: dark)
+colo seoul256
+" Light color scheme
+"   colo seoul256-light
+" Switch
+"   set background=dark
+"   set background=light
+
+
 "  set encoding "explanation: http://stackoverflow.com/a/5795441/453396
 if has("multi_byte")
 "  if &termencoding == ""
