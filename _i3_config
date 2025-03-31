@@ -13,7 +13,8 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+#font pango:monospace 8
+font pango:Fira Code Regular Nerd Font Complete 15
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -26,26 +27,53 @@ font pango:monospace 8
 # X core fonts rendering does not support right-to-left and this being a bitmap
 # font, it doesn’t scale on retina/hidpi displays.
 
-exec --no-startup-id "compton -b"
+# exec --no-startup-id autorandr.py -c
+# exec --no-startup-id "compton -b --config  /home/michelepa/.config/compton/compton.conf"
+exec --no-startup-id "/home/michelepa/bin/compton -b --config /home/michelepa/.config/compton/compton.conf"
+exec --no-startup-id nm-applet # --sm-disable https://mail.gnome.org/archives/networkmanager-list/2011-May/msg00141.html
+exec --no-startup-id "/usr/bin/keepassxc &"
+exec --no-startup-id "watch -n 1800 feh --randomize --bg-fill /home/michelepa/Pictures/wallpapers"
+exec --no-startup-id "/home/michelepa/bin/greenclip daemon>/dev/null"
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+# bindsym $mod+Return exe i3-sensible-terminal
+bindsym $mod+Return exec WezTerm.AppImage
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
+# greenclip
+bindsym $mod+Shift+z exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard -matching fuzzy -sort-method fzf -sort
+
+# search docs
+# language:term     # Search on Zeal
+# man term          # Search on Man
+# s term            # Search on Stack Overflow
+# g term            # Search on Google
+# d term            # Search on DuckDuckGo
+# dd language term  # Search on DevDocs
+bindsym $mod+Ctrl+d exec /home/michelepa/bin/rofi-zeal.sh
+
+# screen keyboard cast
+bindsym $mod+Ctrl+k exec screenkey --scr 1 --opacity 0.1 -f FiraCodeNerdFontMono --font-size small
+
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
+#bindsym $mod+d exec dmenu_run
+
 #bindsym $mod+d exec --no-startup rofi -show run
 bindsym $mod+Tab exec "rofi -combi-modi drun  -show drun"
+# to preview and change rofi theme run rofi-theme-selector
+
+# https://github.com/Coffelius/rofi-code
+bindsym $mod+Shift+v exec --no-startup-id rofi-code --code 'flatpak run com.visualstudio.code'
 
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+#bindsym $mod+Shift+d exec --no-startup-id i3-dmenu-desktop
 
 
 # i3 uses jkl; use vim like instead of hjkl -- fix that
@@ -122,13 +150,50 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
+# move current workspace between monitors
+bindsym $mod+Control+Left move workspace to output left
+bindsym $mod+Control+Down move workspace to output down
+bindsym $mod+Control+Up move workspace to output up
+bindsym $mod+Control+Righ move workspace to output right
+
+# rename current workspace
+bindsym $mod+Control+r exec i3-input -F 'rename workspace to "%s"' -P 'New name: '
+
+# autorandr https://github.com/wertarbyte/autorandr
+# autorandr.py 
+set $mode_screen Screen Layout (m)obile, (d)ocked (a)uto
+    mode "$mode_screen" {
+      # Only laptop:
+      bindsym m exec --no-startup-id autorandr.py --load mobile, mode "default"
+      # Home desk (2 screens):
+      bindsym d exec --no-startup-id autorandr.py --load docked, mode "default"
+      # Auto fallback:
+      bindsym a exec --no-startup-id autorandr.py --change, mode "default"
+
+      # back to normal: Enter or Escape
+      bindsym Return mode "default"
+      bindsym Escape mode "default"
+    }
+bindsym $mod+Shift+s mode "$mode_screen"
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+# bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
+mode "exit: [l]ogout, [r]eboot, [s]hutdown" {
+  bindsym l exec i3-msg exit
+  bindsym r exec systemctl reboot
+  bindsym s exec systemctl poweroff
+  bindsym Escape mode "default"
+  bindsym Return mode "default"
+}
+bindsym $mod+Shift+e mode "exit: [l]ogout, [r]eboot, [s]hutdown"
+
+bindsym $mod+Shift+p [instance="keepassxc"] scratchpad show, move position center
+for_window [instance="keepassxc"] floating enable, resize set 800 800, move scratchpad, border pixel 5
 
 set $term xfce4-terminal
 
@@ -160,9 +225,20 @@ bindsym $mod+r mode "resize"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-}
+#bar {
+#        id laptop-bar
+#        output eDP
+#        status_command i3status
+#        font pango:Fira Code Regular Nerd Font Complete 10
+#}
+
+#bar {
+#        id external-bar
+#        output DisplayPort-4
+#        font pango:Fira Code Regular Nerd Font Complete 15
+#        tray_output None
+#}
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 ### i3-gaps stuff ###
 
@@ -170,7 +246,7 @@ bar {
 for_window [class="^.*"] border pixel 3
 
 # Smart Gaps
-smart_gaps on
+#smart_gaps on
 
 # Smart Borders
 smart_borders on
